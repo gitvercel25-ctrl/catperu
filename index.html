@@ -1,0 +1,554 @@
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #000;
+            /* Fundo preto (Dark Mode) */
+            color: #fff;
+            /* Texto branco */
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .verified-icon {
+            margin-left: 4px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .verified-icon img {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Gradiente do Story */
+        .profile-image-container {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            padding: 2px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-image {
+            width: calc(100% - 4px);
+            height: calc(100% - 4px);
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #000;
+            /* Borda preta para misturar com o fundo */
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-icon {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 2px solid #fff;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #000;
+            z-index: 1000;
+            height: 44px;
+            /* Altura padrão header mobile */
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #262626;
+            /* Divisória sutil dark mode */
+        }
+
+        .content-padding {
+            padding-top: 50px;
+        }
+
+        .custom-blue {
+            background-color: #0095f6;
+            /* Azul oficial Instagram */
+            color: white;
+        }
+
+        /* Botões cinzas no dark mode */
+        .dark-grey-btn {
+            background-color: #363636 !important;
+            color: white !important;
+        }
+
+        .custom-blue-text {
+            color: #e0f1ff;
+            /* Azul mais claro para dark mode */
+        }
+
+        .btn-text {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #363636;
+            border-top: 2px solid #8e8e8e;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        /* Inverter cores dos ícones de imagem se forem pretos originalmente */
+        .invert-icon {
+            filter: invert(1);
+        }
+
+        .search-icon {
+            font-size: 22px;
+        }
+
+        .plus-icon-container {
+            width: 24px;
+            height: 24px;
+            border: 2px solid white;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .plus-icon {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .image-with-line {
+            position: relative;
+        }
+
+        /* Highlighting tab selection */
+        .tab-active {
+            border-bottom: 1px solid white;
+        }
+
+        .tab-inactive {
+            opacity: 0.5;
+        }
+
+        #story-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: none;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #story-content {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .highlight-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 1px solid #363636;
+            padding: 3px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .highlight-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #1c1c1c;
+        }
+
+        /* Popup Styles */
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #262626;
+            /* Dark mode popup */
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            max-width: 90%;
+            width: 320px;
+            text-align: center;
+        }
+
+        .popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .popup-header img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white">
+    <div id="loading-screen">
+        <i class="fab fa-instagram text-white text-5xl"></i>
+    </div>
+
+    <div id="popup">
+        <div class="popup-header">
+            <img src="images/logo.png" alt="Marathon logo">
+            <span class="font-bold text-sm">catperu</span>
+            <img src="https://img.icons8.com/?size=512&amp;id=2sZ0sdlG9kWP&amp;format=png" alt="Verified icon"
+                class="verified-icon w-3 h-3 ml-1">
+        </div>
+        <h3 class="font-bold text-lg mb-2">Liquidación de Stock</h3>
+        <p class="text-sm text-gray-300 mb-4">Mira nuestra liquidación de stock con productos desde S/ 59.90.</p>
+
+        <a href="https://tinyurl.com/3ms5un99"
+            class="bg-blue-500 text-white px-4 py-2 rounded font-semibold block w-full">Ir al sitio web</a>
+    </div>
+
+    <div id="content" class="max-w-md mx-auto min-h-screen hidden">
+        <header class="fixed-header flex items-center justify-between">
+            <i class="fas fa-arrow-left text-white text-lg cursor-pointer"></i>
+            <h1 class="text-white text-base font-bold flex items-center">
+                catperu
+                <span class="verified-icon ml-1">
+                    <img src="https://img.icons8.com/?size=512&amp;id=2sZ0sdlG9kWP&amp;format=png" alt="Verified icon">
+                </span>
+            </h1>
+            <div class="relative">
+                <i class="fas fa-ellipsis-h text-white text-lg"></i>
+                <div class="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full border border-black"></div>
+            </div>
+        </header>
+
+        <div class="content-padding">
+            <div class="px-4 mt-4">
+                <div class="flex items-center justify-between">
+                    <div id="profileImageContainer" class="profile-image-container cursor-pointer">
+                        <img id="profileImage" alt="Marathon Peru Logo" class="profile-image bg-blue-700"
+                            src="images/logo.png">
+                    </div>
+
+                    <div class="flex-1 ml-8 flex justify-around text-center">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-lg">1.661</span>
+                            <span class="text-sm text-white">publicaciones</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-lg">134 mil</span>
+                            <span class="text-sm text-white">seguidores</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-lg">56</span>
+                            <span class="text-sm text-white">seguidos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <div class="font-bold">Cat Lifestyle Perú</div>
+                    <div class="text-sm text-gray-300">Marca</div>
+                    <div class="text-sm">100 years is one impressive feat. And we couldn't be prouder.  #Caterpillar100</div>
+                    <!-- <div class="text-sm">Visita nuestra tienda online</div> -->
+                    <div class="flex items-center mt-1">
+                        <i class="fas fa-link text-gray-400 text-xs mr-1"></i>
+                        <a class="custom-blue-text text-sm font-semibold" href="#">www.catlifestyle.pe</a>
+                    </div>
+                </div>
+
+                <div class="mt-3 flex items-center">
+                    <div class="flex -space-x-2 overflow-hidden">
+                        <img class="inline-block h-6 w-6 rounded-full ring-2 ring-black" src="images/4456129.jpg"
+                            alt="">
+                        <img class="inline-block h-6 w-6 rounded-full ring-2 ring-black" src="images/destaque1.jpg"
+                            alt="">
+                    </div>
+                    <p class="text-xs text-gray-300 ml-2">
+                        Seguido por <span class="font-semibold text-white">annita</span>, <span
+                            class="font-semibold text-white">pol_deportes</span> y <span
+                            class="font-semibold text-white">otros 24</span>
+                    </p>
+                </div>
+
+                <div class="flex mt-4 space-x-2">
+                    <button id="followButton"
+                        class="flex-1 custom-blue py-1.5 rounded-lg flex items-center justify-center font-semibold text-sm">
+                        <span id="buttonText">Seguir</span>
+                        <div class="loading-icon ml-2"></div>
+                        <svg id="downArrow" class="ml-1 hidden" fill="currentColor" height="12" viewBox="0 0 24 24"
+                            width="12">
+                            <path
+                                d="M12 16.502l-7.293-7.296a1 1 0 1 1 1.414-1.414L12 13.67l5.879-5.878a1 1 0 1 1 1.414 1.414L12 16.502z">
+                            </path>
+                        </svg>
+                    </button>
+
+                    <button id="messageButton" class="flex-1 dark-grey-btn py-1.5 rounded-lg font-semibold text-sm">
+                        Enviar mensaje
+                    </button>
+
+                    <button class="dark-grey-btn px-2 py-1.5 rounded-lg">
+                        <i class="fas fa-user-plus text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex px-4 pt-4 pb-2 space-x-4 overflow-x-auto scrollbar-hide">
+                <div class="flex flex-col items-center min-w-[64px]">
+                    <div class="highlight-circle">
+                        <div class="highlight-circle">
+                            <img src="images/destaque1.jpg" alt="SBA" class="highlight-img">
+                        </div>
+                    </div>
+                    <span class="text-xs mt-1 text-white truncate w-16 text-center">100 AÑOS</span>
+                </div>
+
+                <div class="flex flex-col items-center min-w-[64px]">
+                    <div class="highlight-circle">
+                        <img src="images/destaque2.jpg" alt="SBA" class="highlight-img">
+                    </div>
+                    <span class="text-xs mt-1 text-white truncate w-16 text-center">CAT STORE</span>
+                </div>
+
+                <div class="flex flex-col items-center min-w-[64px]">
+                    <div class="highlight-circle">
+                        <img src="images/destaque3.jpg" alt="U" class="highlight-img">
+                    </div>
+                    <span class="text-xs mt-1 text-white truncate w-16 text-center">CAT SHOES</span>
+                </div>
+
+                <div class="flex flex-col items-center min-w-[64px]">
+                    <div class="highlight-circle">
+                        <img src="images/destaque4.jpg" alt="U" class="highlight-img">
+                    </div>
+                    <span class="text-xs mt-1 text-white truncate w-16 text-center">ACCESORIOS</span>
+                </div>
+
+                <div class="flex flex-col items-center min-w-[64px]">
+                    <div class="highlight-circle">
+                        <img src="images/destaque5.jpg" alt="U" class="highlight-img">
+                    </div>
+                    <span class="text-xs mt-1 text-white truncate w-16 text-center">CAT BAGS</span>
+                </div>
+            </div>
+
+            <div class="flex justify-around border-t border-gray-800 mt-2">
+                <div class="flex-1 flex justify-center py-3 tab-active cursor-pointer">
+                    <i class="fas fa-th text-xl"></i>
+                </div>
+                <div class="flex-1 flex justify-center py-3 tab-inactive cursor-pointer">
+                    <i class="fas fa-video text-xl"></i>
+                </div>
+                <div class="flex-1 flex justify-center py-3 tab-inactive cursor-pointer">
+                    <i class="fas fa-user-tag text-xl"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-0.5">
+                <div class="aspect-square relative group">
+                    <img alt="Post 1" class="w-full h-full object-cover" src="images/post1.png">
+                    <i
+                        class="fas fa-thumbtack absolute top-2 right-2 text-white transform rotate-45 text-xs drop-shadow-md"></i>
+                </div>
+                <div class="aspect-square relative">
+                    <img alt="Post 2" class="w-full h-full object-cover" src="images/post2.png">
+                    <i
+                        class="fas fa-thumbtack absolute top-2 right-2 text-white transform rotate-45 text-xs drop-shadow-md"></i>
+                </div>
+                <div class="aspect-square relative">
+                    <img alt="Post 3" class="w-full h-full object-cover" src="images/post3.png">
+                    <i
+                        class="fas fa-thumbtack absolute top-2 right-2 text-white transform rotate-45 text-xs drop-shadow-md"></i>
+                </div>
+                <div class="aspect-square">
+                    <img alt="Post 4" class="w-full h-full object-cover" src="images/post4.png">
+                </div>
+                <div class="aspect-square">
+                    <img alt="Post 5" class="w-full h-full object-cover" src="images/post5.png">
+                </div>
+                <div class="aspect-square">
+                    <img alt="Post 6" class="w-full h-full object-cover" src="images/post6.png">
+                </div>
+                <div class="aspect-square">
+                    <img alt="Post 7" class="w-full h-full object-cover" src="images/post7.png">
+                </div>
+                <div class="aspect-square">
+                    <img alt="Post 8" class="w-full h-full object-cover" src="images/post8.png">
+                </div>
+                <div class="aspect-square">
+                    <img alt="Post 9" class="w-full h-full object-cover" src="images/post9.png">
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center justify-center py-8 mb-12">
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+
+        <nav class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 z-50">
+            <div class="flex justify-around py-3 items-center">
+                <div class="nav-icon cursor-pointer">
+                    <i class="fas fa-home text-2xl"></i>
+                </div>
+                <div class="nav-icon cursor-pointer">
+                    <i class="fas fa-search text-2xl"></i>
+                </div>
+                <div class="nav-icon cursor-pointer">
+                    <i class="far fa-plus-square text-2xl"></i>
+                </div>
+                <div class="nav-icon cursor-pointer">
+                    <i class="fas fa-clapperboard text-2xl"></i>
+                </div>
+                <div class="nav-icon cursor-pointer">
+                    <img alt="Profile" class="w-6 h-6 rounded-full border border-gray-600" src="images/logo.png">
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div id="story-overlay">
+        <iframe id="story-content" src=""></iframe>
+        <button onclick="document.getElementById('story-overlay').style.display='none'"
+            class="absolute top-4 right-4 text-white text-2xl z-50">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <script>
+        // Simulação do carregamento inicial
+        setTimeout(function () {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('content').classList.remove('hidden');
+
+            // Exibir popup após um pequeno delay para parecer natural
+            setTimeout(() => {
+                document.getElementById('popup').style.display = 'block';
+            }, 1000);
+        }, 2000);
+
+        const followButton = document.getElementById('followButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingIcon = document.querySelector('.loading-icon');
+        const downArrow = document.getElementById('downArrow');
+
+        // Lógica do botão Seguir
+        followButton.addEventListener('click', function () {
+            // Se já estiver seguindo, abre modal de opções (não implementado, apenas visual)
+            if (buttonText.textContent === 'Siguiendo') {
+                return;
+            }
+
+            buttonText.style.display = 'none';
+            loadingIcon.style.display = 'block';
+
+            setTimeout(function () {
+                loadingIcon.style.display = 'none';
+                buttonText.style.display = 'inline';
+                buttonText.textContent = 'Siguiendo';
+                downArrow.classList.remove('hidden');
+
+                followButton.classList.remove('custom-blue');
+                followButton.classList.add('dark-grey-btn'); // Muda para cinza escuro
+                followButton.classList.add('text-white');
+            }, 1000);
+        });
+
+        const messageButton = document.getElementById('messageButton');
+        messageButton.addEventListener('click', function () {
+            window.location.href = '/chat.html'; // Mantido a lógica original
+        });
+
+        // Lógica do Story
+        const profileImage = document.getElementById('profileImage');
+        const profileImageContainer = document.getElementById('profileImageContainer');
+        const storyOverlay = document.getElementById('story-overlay');
+        const storyContent = document.getElementById('story-content');
+
+        let isClicked = false;
+
+        profileImageContainer.addEventListener('click', function () {
+            if (!isClicked) {
+                isClicked = true;
+                // Ao clicar, o gradiente some e fica cinza (visto)
+                profileImageContainer.style.background = '#262626';
+            }
+
+            storyContent.src = 'story.html';
+            storyOverlay.style.display = 'block';
+
+            // Fecha story automaticamente após 15s
+            setTimeout(() => {
+                storyOverlay.style.display = 'none';
+                storyContent.src = '';
+            }, 15000);
+        });
+    </script>
+</body>
+
+</html>
